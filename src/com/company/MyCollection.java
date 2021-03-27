@@ -47,7 +47,7 @@ public class MyCollection<E> implements Collection<E> {
     @Override
     public boolean contains(Object o) {
         for (Object c : elementData) {
-            if (o.equals(c)) {
+            if (o == c) {
                 return true;
             }
         }
@@ -67,7 +67,7 @@ public class MyCollection<E> implements Collection<E> {
         }
 
         for (Boolean a : my) {
-            if (a.equals(false)) {
+            if (!a) {
                 return false;
             }
         }
@@ -81,28 +81,42 @@ public class MyCollection<E> implements Collection<E> {
         return result;
     }
 
+
     @Override
     public <T> T[] toArray(T[] a) {
 
-        for (T c : a) {
-            if (c != null) {
-                elementData = Arrays.copyOf(a, size);
-                return (T[]) elementData;
+        T[] trouble = null;
+
+        if (a.length == 0) {
+            trouble = Arrays.copyOf((T[]) elementData, size);
+        }
+
+        if (a.length <= size) {
+            for (T c : a) {
+                if (c != null) {
+                    trouble = Arrays.copyOf(a, size);
+                } else {
+                    trouble = Arrays.copyOf((T[]) elementData, size);
+                }
+            }
+        } else {
+            for (T c : a) {
+                if (c != null) {
+                    System.arraycopy((T[])elementData, 0, a, 0, size);
+                    trouble = a;
+                } else {
+                    trouble = Arrays.copyOf((T[])elementData, a.length);
+                }
             }
         }
 
-        if (a.length < size) {
-            return (T[]) Arrays.copyOf(elementData, size);
-        } else {
-            a = (T[]) Arrays.copyOf(elementData, a.length);
-            return a;
-        }
+        return trouble;
     }
 
     @Override
     public boolean remove(Object o) {
         for (int i = 0; i <= size; i++) {
-            if (o.equals(elementData[i])) {
+            if (o == elementData[i]) {
                 Object[] result = new Object[size - 1];
                 System.arraycopy(elementData, 0, result, 0, i);
                 System.arraycopy(elementData, i + 1, result, i, size - i - 1);
@@ -130,22 +144,14 @@ public class MyCollection<E> implements Collection<E> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        MyCollection<Object> my = new MyCollection<>();
-        Object[] result = c.toArray();
-        System.out.println(Arrays.toString(result));
-
-        for (Object o : result) {
-            for (int j = 0; j < size; j++) {
-                if (o.equals(elementData[j])) {
-                    my.add(elementData[j]);
-                }
+        boolean isChange = false;
+        for (int i = 0; i < size; i++) {
+            while (!c.contains(elementData[i]) && contains(elementData[i])) {
+                remove(elementData[i]);
+                isChange = true;
             }
         }
-        Object[] result2 = my.toArray();
-        elementData = Arrays.copyOf(result2, result2.length);
-        System.out.println(Arrays.toString(elementData));
-
-        return elementData.length != size;
+        return isChange;
     }
 
     @Override

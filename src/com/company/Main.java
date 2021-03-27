@@ -8,7 +8,7 @@ public class Main {
         MyCollection<Integer> myCollection = new MyCollection<>();
         myCollection.add(1);
         myCollection.add(2);
-        myCollection.add(3);
+        myCollection.add(null);
         myCollection.add(2);
         myCollection.add(4);
 
@@ -18,11 +18,8 @@ public class Main {
 
         System.out.println();
 
-        Integer[] arr = new Integer[10];
+        Integer[] arr = {0,0,0,0,0,0,0,0,0,0};
+
         System.out.println(Arrays.toString(myCollection.toArray(arr)));
-
-        System.out.println(myCollection.remove(3));
-
-        System.out.println(Arrays.toString(myCollection.toArray()));
     }
 }
